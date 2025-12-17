@@ -1,0 +1,20 @@
+{
+  "name": "module-hardened",
+  "version": "0.0.0",
+  "private": true,
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "scripts": {
+    "prep:copy-shared": "powershell -Command \"Remove-Item extension\\shared_libs -Recurse -Force -ErrorAction SilentlyContinue; Copy-Item shared_libs extension -Recurse\"",
+    "test": "node -e \"const { readdirSync, statSync } = require('fs'); const { execSync } = require('child_process'); for (const f of readdirSync('tests')) { const p = `tests/${f}`; if (f.endsWith('.test.js') && statSync(p).isFile()) { console.log('>>', f); execSync(`node ${p}`, { stdio: 'inherit' }); } }\"",
+    "build": "npm run prep:copy-shared && cd extension && npm install",
+    "package": "npm run build && cd extension && npx @vscode/vsce package --no-yarn --out ../dist/zeroui.vsix"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.7.1"
+  }
+}
+
+
+
