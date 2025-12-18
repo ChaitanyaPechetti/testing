@@ -1,0 +1,85 @@
+{
+  "name": "zeroui-risk-pill",
+  "displayName": "ZeroUI Risk Pill",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://example.com/your/repo.git"
+  },
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "zeroui.refreshRiskPill",
+        "title": "ZeroUI: Refresh Risk Pill"
+      },
+      {
+        "command": "zeroui.precommit",
+        "title": "ZeroUI: Precommit"
+      },
+      {
+        "command": "zeroui.precommitRollback",
+        "title": "ZeroUI: Precommit Rollback Gate"
+      },
+      {
+        "command": "zeroui.healthCheck",
+        "title": "ZeroUI: Health Check"
+      },
+      {
+        "command": "zeroui.openZeroUI",
+        "title": "ZeroUI: Open"
+      },
+      {
+        "command": "zeroui.showLastReceipt",
+        "title": "ZeroUI: Open Last Receipt"
+      },
+      {
+        "command": "zeroui.runFeatureFlagAction",
+        "title": "ZeroUI: Run Feature Flag Action"
+      },
+      {
+        "command": "zeroui.rollbackFlagAction",
+        "title": "ZeroUI: Rollback Feature Flag"
+      },
+      {
+        "command": "zeroui.seedDemoReceipt",
+        "title": "ZeroUI: Seed Demo Receipt"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "zeroUI.container",
+          "title": "Zero UI",
+          "icon": "resources/zero-ui.svg"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "zeroUI.view.main",
+          "name": "Zero UI"
+        }
+      ],
+      "zeroUI.container": [
+        {
+          "id": "zeroUI.view.main",
+          "name": "Zero UI"
+        }
+      ]
+    }
+  },
+  "categories": [
+    "Other"
+  ],
+  "files": [
+    "extension.js",
+    "shared_libs",
+    "package.json",
+    "LICENSE"
+  ]
+}

@@ -1,0 +1,899 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/effective_gsmd_policy_m1.schema.json",
+  "title": "Effective GSMD Policy M1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "risk_scoring",
+    "release_gate",
+    "stage_preset",
+    "guard_window",
+    "metric_signal",
+    "observability_requirement",
+    "receipts_policy",
+    "privacy_profile",
+    "override_governance",
+    "approval_matrix",
+    "secrets_detection",
+    "feature_flag_hygiene",
+    "feature_flag_meta",
+    "db_migration",
+    "api_compat",
+    "freeze_window",
+    "rca_template",
+    "nudge_profile",
+    "bindings"
+  ],
+  "properties": {
+    "risk_scoring": { "$ref": "#/$defs/riskScoring" },
+    "release_gate": { "$ref": "#/$defs/releaseGate" },
+    "stage_preset": { "$ref": "#/$defs/stagePreset" },
+    "guard_window": { "$ref": "#/$defs/guardWindow" },
+    "metric_signal": { "$ref": "#/$defs/metricSignalBlock" },
+    "observability_requirement": { "$ref": "#/$defs/observabilityRequirement" },
+    "receipts_policy": { "$ref": "#/$defs/receiptsPolicy" },
+    "privacy_profile": { "$ref": "#/$defs/privacyProfile" },
+    "override_governance": { "$ref": "#/$defs/overrideGovernance" },
+    "approval_matrix": { "$ref": "#/$defs/approvalMatrix" },
+    "secrets_detection": { "$ref": "#/$defs/secretsDetection" },
+    "feature_flag_hygiene": { "$ref": "#/$defs/featureFlagHygiene" },
+    "feature_flag_meta": { "$ref": "#/$defs/featureFlagMeta" },
+    "testing": { "$ref": "#/$defs/testing" },
+    "outcomes": { "$ref": "#/$defs/outcomeAttribution" },
+    "devex_metrics": { "$ref": "#/$defs/devexMetrics" },
+    "executive_snapshot": { "$ref": "#/$defs/executiveSnapshot" },
+    "db_migration": { "$ref": "#/$defs/dbMigrationPolicy" },
+    "api_compat": { "$ref": "#/$defs/apiCompatPolicy" },
+    "freeze_window": { "$ref": "#/$defs/freezeWindowPolicy" },
+    "rca_template": { "$ref": "#/$defs/rcaTemplate" },
+    "nudge_profile": { "$ref": "#/$defs/nudgeProfile" },
+    "bindings": { "$ref": "#/$defs/registryBindings" }
+  },
+  "$defs": {
+    "refId": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref_id"],
+      "properties": {
+        "ref_id": { "type": "string" }
+      }
+    },
+    "templateRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_ref"],
+      "properties": {
+        "template_ref": { "type": "string" }
+      }
+    },
+    "bindingRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["binding_ref"],
+      "properties": {
+        "binding_ref": { "type": "string" }
+      }
+    },
+    "selectorRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector_ref"],
+      "properties": {
+        "selector_ref": { "type": "string" }
+      }
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_ref"],
+      "properties": {
+        "evidence_ref": { "type": "string" }
+      }
+    },
+    "evidenceTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "example_ref": { "type": "string" }
+      }
+    },
+    "linkRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["link_ref"],
+      "properties": {
+        "link_ref": { "type": "string" }
+      }
+    },
+    "featureFlagProviderCapability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id"],
+      "properties": {
+        "provider_id": { "type": "string" },
+        "supports_kill": { "type": "boolean" },
+        "supports_metadata": { "type": "boolean" },
+        "supports_audit": { "type": "boolean" }
+      }
+    },
+    "featureFlagMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "capability_matrix_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "required_fields": { "type": "array", "items": { "type": "string" } },
+        "kill_path_ref": { "type": "string" },
+        "owner_ref": { "type": "string" },
+        "sla_seconds_ref": { "type": "string" }
+      }
+    },
+    "featureFlagHygiene": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stale_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "enforcement_mode": { "type": "string", "enum": ["observe", "warn", "enforce"] }
+      }
+    },
+    "previewEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "available": { "type": "boolean" },
+        "label": { "type": "string" },
+        "preview_url_template_ref": { "type": "string" }
+      }
+    },
+    "previewSmokeCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "ref": { "type": "string" },
+        "enforcement_mode": { "type": "string", "enum": ["observe", "warn", "enforce"] },
+        "retry_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "rerun_allowed": { "type": "boolean" }
+      }
+    },
+    "ruleRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_ref"],
+      "properties": {
+        "rule_ref": { "type": "string" }
+      }
+    },
+    "schemaRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_ref"],
+      "properties": {
+        "schema_ref": { "type": "string" }
+      }
+    },
+    "commandRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command_ref"],
+      "properties": {
+        "command_ref": { "type": "string" }
+      }
+    },
+    "policyRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_ref"],
+      "properties": {
+        "policy_ref": { "type": "string" }
+      }
+    },
+    "versionRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version_ref"],
+      "properties": {
+        "version_ref": { "type": "string" }
+      }
+    },
+    "thresholdRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold_ref"],
+      "properties": {
+        "threshold_ref": { "type": "string" }
+      }
+    },
+    "riskDriver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "weight_ref": { "type": "string" },
+        "weight": { "type": "number" },
+        "evidence_selector_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/selectorRef" }
+        },
+        "message_template_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateRef" }
+        }
+      }
+    },
+    "riskBand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "min_ref": { "type": "string" },
+        "max_ref": { "type": "string" },
+        "boundary_ref": { "type": "string" }
+      }
+    },
+    "riskAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["action_id", "command_ref"],
+      "properties": {
+        "action_id": { "type": "string" },
+        "label": { "type": "string" },
+        "command_ref": { "type": "string" },
+        "args_schema_ref": { "type": "string" },
+        "applies_when_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "riskScoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["drivers", "bands"],
+      "properties": {
+        "drivers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/riskDriver" }
+        },
+        "bands": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/riskBand" }
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["actions"],
+          "properties": {
+            "actions": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/riskAction" }
+            }
+          }
+        }
+      }
+    },
+    "stageCheck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "criticality": { "type": "string" },
+        "block_when_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/selectorRef" }
+        }
+      }
+    },
+    "releasePreviewConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "selector_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/selectorRef" }
+        },
+        "template_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateRef" }
+        },
+        "binding_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/bindingRef" }
+        }
+      }
+    },
+    "releaseSmokesConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scenario_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/selectorRef" }
+        }
+      }
+    },
+    "releaseGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage_checks"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["observe", "warn", "enforce"] },
+        "severity_map": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "rollback_requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string" },
+              "label": { "type": "string" },
+              "required_evidence_refs": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/evidenceRef" }
+              },
+              "applies_when_refs": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/ruleRef" }
+              }
+            }
+          }
+        },
+        "stage_checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/stageCheck" }
+        },
+        "previews": { "$ref": "#/$defs/releasePreviewConfig" },
+        "smokes": { "$ref": "#/$defs/releaseSmokesConfig" }
+      }
+    },
+    "stagePreset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preset_id", "stages"],
+      "properties": {
+        "preset_id": { "type": "string" },
+        "name": { "type": "string" },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["stage_id"],
+            "properties": {
+              "stage_id": { "type": "string" },
+              "label": { "type": "string" },
+              "promotability_rule_refs": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/ruleRef" }
+              }
+            }
+          }
+        },
+        "binding_ref": { "type": "string" }
+      }
+    },
+    "guardWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activation_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "timer_fields": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "start_ref": { "type": "string" },
+            "duration_ref": { "type": "string" },
+            "end_ref": { "type": "string" }
+          }
+        },
+        "breach_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "allowed_action_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        }
+      }
+    },
+    "metricSignalDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal_id"],
+      "properties": {
+        "signal_id": { "type": "string" },
+        "query_ref": { "type": "string" },
+        "link_ref": { "type": "string" },
+        "selector_ref": { "type": "string" }
+      }
+    },
+    "metricThresholdDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold_id", "signal_ref", "comparator", "value_ref"],
+      "properties": {
+        "threshold_id": { "type": "string" },
+        "signal_ref": { "type": "string" },
+        "comparator": {
+          "type": "string",
+          "enum": ["gt", "gte", "lt", "lte", "eq", "neq"]
+        },
+        "value_ref": { "type": "string" },
+        "severity": { "type": "string" }
+      }
+    },
+    "metricSignalBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signals", "thresholds"],
+      "properties": {
+        "signals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metricSignalDefinition" }
+        },
+        "thresholds": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metricThresholdDefinition" }
+        }
+      }
+    },
+    "observabilityRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "correlation_template_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateRef" }
+        },
+        "evidence_link_template_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/linkRef" }
+        },
+        "minimum_requirement_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "evidence_templates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceTemplate" }
+        }
+      }
+    },
+    "feature_flag_meta": { "$ref": "#/$defs/featureFlagMeta" },
+    "feature_flag_hygiene": { "$ref": "#/$defs/featureFlagHygiene" },
+    "feature_flag_provider_capabilities": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/featureFlagProviderCapability" }
+    },
+    "preview_environment": { "$ref": "#/$defs/previewEnvironment" },
+    "preview_smoke_checks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/previewSmokeCheck" }
+    },
+    "approval_requirements": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/approvalRequirement" }
+    },
+    "break_glass_rules": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/breakGlassRule" }
+    },
+    "actuation_controls": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/actuationControl" }
+    },
+    "receiptsPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_fields", "timestamping_mode"],
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "timestamping_mode": {
+          "type": "string",
+          "enum": ["client", "server", "hybrid"]
+        },
+        "evidence_requirements": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "evidence_selector_refs": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/selectorRef" }
+            },
+            "attachment_schema_refs": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/schemaRef" }
+            },
+            "required_evidence_refs": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "templates": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/evidenceTemplate" }
+            }
+          }
+        },
+        "visibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "developer": { "$ref": "#/$defs/receiptVisibility" },
+            "auditor": { "$ref": "#/$defs/receiptVisibility" }
+          }
+        }
+      }
+    },
+    "privacyProfileView": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "masking_strategy_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "redaction_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "link_template_refs": { "type": "array", "items": { "$ref": "#/$defs/templateRef" } },
+        "allowed_evidence_fields": { "type": "array", "items": { "type": "string" } },
+        "masking_format_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "privacyProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "redaction_rules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "developer_view": { "$ref": "#/$defs/privacyProfileView" },
+        "auditor_view": { "$ref": "#/$defs/privacyProfileView" },
+        "default_view": { "type": "string", "enum": ["developer", "auditor"] },
+        "masking_strategy_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        }
+      }
+    },
+    "overrideGovernance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "approver_set_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "expiry_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "scope_constraint_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "approvalMatrixEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_ref", "approver_refs"],
+      "properties": {
+        "scope_ref": { "type": "string" },
+        "approver_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "escalation_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "approvalMatrix": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entries"],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/approvalMatrixEntry" }
+        }
+      }
+    },
+    "secretsDetector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detector_id"],
+      "properties": {
+        "detector_id": { "type": "string" },
+        "version_ref": { "type": "string" },
+        "confidence_threshold_ref": { "type": "string" },
+        "remediation_link_ref": { "type": "string" }
+      }
+    },
+    "secretsDetection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["detectors"],
+      "properties": {
+        "detectors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/secretsDetector" }
+        }
+      }
+    },
+    "featureFlagHygiene": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sla_ref": { "type": "string" },
+        "owner_ref": { "type": "string" },
+        "kill_path_ref": { "type": "string" },
+        "stale_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "provider_capability_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        }
+      }
+    },
+    "featureFlagMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "capability_matrix_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/refId" }
+        },
+        "tagging_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "dbMigrationPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "step_requirements": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/policyRef" }
+        },
+        "contract_ref": { "type": "string" },
+        "expiry_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "grace_period_ref": { "type": "string" }
+      }
+    },
+    "apiCompatPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_test_requirement_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/policyRef" }
+        },
+        "expiry_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "grace_period_ref": { "type": "string" }
+      }
+    },
+    "freezeWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["window_id"],
+      "properties": {
+        "window_id": { "type": "string" },
+        "timezone": { "type": "string" },
+        "start_ref": { "type": "string" },
+        "end_ref": { "type": "string" },
+        "elevation_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "block_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "freezeWindowPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["windows"],
+      "properties": {
+        "windows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/freezeWindow" }
+        }
+      }
+    },
+    "rcaTemplateSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section_id"],
+      "properties": {
+        "section_id": { "type": "string" },
+        "label": { "type": "string" },
+        "placeholder_template_ref": { "type": "string" }
+      }
+    },
+    "rcaTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sections"],
+      "properties": {
+        "sections": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/rcaTemplateSection" }
+        },
+        "publication_link_ref": { "type": "string" }
+      }
+    },
+    "nudgeProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "digest_cadence_ref": { "type": "string" },
+        "bundling_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        },
+        "mmm_tagging_rule_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ruleRef" }
+        }
+      }
+    },
+    "testingImpactedSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy_ref": { "type": "string" },
+        "max_duration_ref": { "type": "string" },
+        "budget_ref": { "type": "string" },
+        "fallbacks_ref": { "type": "string" }
+      }
+    },
+    "testingFlakyHandling": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "retry_policy_ref": { "type": "string" },
+        "quarantine_policy_ref": { "type": "string" },
+        "ticketing_action_ref": { "type": "string" }
+      }
+    },
+    "testingDeltaCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "threshold_ref": { "type": "string" },
+        "cadence_ref": { "type": "string" },
+        "scaffold_action_ref": { "type": "string" }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "impacted_selection": { "$ref": "#/$defs/testingImpactedSelection" },
+        "flaky_handling": { "$ref": "#/$defs/testingFlakyHandling" },
+        "delta_coverage": { "$ref": "#/$defs/testingDeltaCoverage" }
+      }
+    },
+    "outcomeAttribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "counting_method_ref": { "type": "string" },
+        "lookback_window_ref": { "type": "string" },
+        "inclusion_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "exclusion_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } }
+      }
+    },
+    "devexMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "metric_ids": { "type": "array", "items": { "type": "string" } },
+        "aggregation_window_ref": { "type": "string" },
+        "anonymisation_mode_ref": { "type": "string" }
+      }
+    },
+    "executiveSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cadence_ref": { "type": "string" },
+        "kpi_refs": { "type": "array", "items": { "type": "string" } },
+        "export_fields_ref": { "type": "string" }
+      }
+    },
+    "registryBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owner_ref": { "type": "string" },
+        "on_call_ref": { "type": "string" },
+        "runbook_link_ref": { "type": "string" },
+        "dashboard_link_ref": { "type": "string" },
+        "template_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateRef" }
+        }
+      }
+    },
+    "actuationControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kill_switch_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "allowed_action_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "attestation_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } }
+      }
+    },
+    "approvalRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string" },
+        "approver_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "scope_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "dual_control": { "type": "boolean" }
+      }
+    },
+    "breakGlassRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scope_refs": { "type": "array", "items": { "$ref": "#/$defs/refId" } },
+        "expiry_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "post_hoc_rule_refs": { "type": "array", "items": { "$ref": "#/$defs/ruleRef" } },
+        "banner_template_ref": { "type": "string" }
+      }
+    }
+  }
+}

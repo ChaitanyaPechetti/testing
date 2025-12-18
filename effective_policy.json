@@ -1,0 +1,9 @@
+{
+    "effective_policy": {
+      "risk_scoring": {
+        "drivers": [{ "id": "demo-driver", "weight": 1 }],
+        "bands": [{ "id": "low", "max": 3 }, { "id": "medium", "min": 4, "max": 6 }, { "id": "high", "min": 7 }]
+      }
+    },
+    "policy_version_ids": ["policy-v1"]
+  }

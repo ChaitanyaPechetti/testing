@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/schemas/m1_receipt.schema.json",
+  "title": "Module 1 Receipt",
+  "type": "object",
+  "required": [
+    "snapshot_hash",
+    "timestamping_mode",
+    "policy_version_ids",
+    "decision_type"
+  ],
+  "properties": {
+    "snapshot_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "timestamping_mode": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["client", "server", "hybrid"]
+        },
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+$"
+        }
+      ]
+    },
+    "policy_version_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "minItems": 1
+    },
+    "decision_type": {
+      "type": "string",
+      "enum": [
+        "risk_score",
+        "release_gate",
+        "stage_check",
+        "observability_gate",
+        "secrets_scan",
+        "override",
+        "freeze_check",
+        "impacted_tests",
+        "flaky_handling",
+        "coverage_delta",
+        "flag_hygiene",
+        "db_migration_check",
+        "api_compat_check",
+        "rca_draft",
+        "nudge_digest",
+        "simulation"
+      ]
+    },
+    "actor": { "$ref": "#/$defs/actor" },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "inputs_summary": { "type": "object" },
+    "outputs_summary": { "type": "object" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/evidenceRef" }
+    },
+    "error": { "$ref": "#/$defs/errorBlock" },
+    "redaction_applied": { "type": "boolean" },
+    "evidence_visibility": {
+      "type": "string",
+      "enum": ["masked", "auditor", "full"]
+    }
+  },
+  "$defs": {
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actor_type": { "type": "string" },
+        "principal_id": { "type": "string" },
+        "repo_id": { "type": "string" },
+        "branch": { "type": "string" },
+        "workspace_id": { "type": "string" },
+        "session_id": { "type": "string" }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string" },
+        "policy_ref": { "type": "string" },
+        "resolver_version": { "type": "string" }
+      }
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "uri_or_id"],
+      "properties": {
+        "kind": { "type": "string" },
+        "uri_or_id": { "type": "string" },
+        "label": { "type": "string" },
+        "template_ref": { "type": "string" }
+      }
+    },
+    "errorBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string" },
+        "message_ref": { "type": "string" },
+        "policy_ref": { "type": "string" },
+        "details": { "type": "object" }
+      }
+    }
+  }
+}
